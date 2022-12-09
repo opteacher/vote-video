@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.anticon {
+  @apply align-baseline;
+}
+
+.ant-scrolling-effect {
+  @apply w-full;
+}
