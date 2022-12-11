@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import Rank from '../views/Rank.vue'
-import Video from '../views/Video.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,11 +12,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/rank',
     name: 'Rank',
     component: Rank
-  },
-  {
-    path: '/video',
-    name: 'Video',
-    component: Video
   }
 ]
 

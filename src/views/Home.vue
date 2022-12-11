@@ -1,12 +1,37 @@
 <template>
   <LytMain>
-    <a-button class="w-full" @click="onGenTestClick">生成</a-button>
     <a-row :gutter="10">
-      <a-col :span="6" v-for="article in articles" :key="article.key">
-        <ComArticle :article="article" />
+      <a-col :span="18" class="flex flex-col space-y-3">
+        <div class="w-full h-56 text-center leading-56 align-middle bg-primary text-white cursor-pointer">
+          放投票规则
+        </div>
+        <a-button
+          v-if="false"
+          class="w-full"
+          @click="EdtAtclEmitter.emit('update:show', { show: true })"
+        >
+          添加作品
+        </a-button>
+        <ComToolbx />
+        <a-row :gutter="10">
+          <a-col :span="8" v-for="article in articles" :key="article.key">
+            <ComArticle :article="article" @refresh="refresh" />
+          </a-col>
+        </a-row>
+      </a-col>
+      <a-col :span="6">
+        <ComRank :articles="articles" />
       </a-col>
     </a-row>
   </LytMain>
+  <FormDialog
+    title="增加/修改作品"
+    width="40vw"
+    :emitter="EdtAtclEmitter"
+    :mapper="EdtAtclMapper"
+    :copy="Article.copy"
+    @submit="onArticleSubmit"
+  />
 </template>
 
 <script lang="ts">
@@ -15,51 +40,45 @@ import LytMain from '../layouts/LytMain.vue'
 import api from '../api'
 import Article from '@/types/article'
 import ComArticle from '../components/ComArticle.vue'
-import { message } from 'ant-design-vue'
-import axios from 'axios'
+import FormDialog from '@/components/com/FormDialog.vue'
+import { EdtAtclEmitter, EdtAtclMapper } from './Home'
+import { useStore } from 'vuex'
+import ComRank from '../components/ComRank.vue'
+import ComToolbx from '../components/ComToolbx.vue'
 
 export default defineComponent({
   name: 'Home',
   components: {
     LytMain,
-    ComArticle
+    ComArticle,
+    ComRank,
+    ComToolbx,
+    FormDialog
   },
   setup() {
+    const store = useStore()
     const articles = reactive([] as Article[])
 
     onMounted(refresh)
 
     async function refresh() {
-      articles.splice(0, articles.length, ...(await api.all({ copy: Article.copy })))
+      await store.dispatch('refresh')
+      articles.splice(0, articles.length, ...(await api.article.all({ copy: Article.copy })))
     }
-    async function onGenTestClick() {
-      var xhr = new XMLHttpRequest()
-      xhr.open('GET', '/vote-video/cors/rand_image', true)
-      xhr.onload = function () {
-        console.log(xhr.responseURL) // http://example.com/test
-      }
-      xhr.send(null)
-      // try {
-      //   const resp = await axios.get('/vote-video/cors/rand_image')
-      //   console.log(resp)
-      // } catch (err: any) {
-      //   console.log(err.toJSON())
-      // }
-      // for (let i = 0; i < 100; ++i) {
-      //   await api.add(
-      //     Article.copy({
-      //       title: `测试作品 #${i}`,
-      //       cover: 'https://api.ixiaowai.cn/gqapi/gqapi.php',
-      //       video: ''
-      //     })
-      //   )
-      // }
-      message.success('This is a success message')
+    async function onArticleSubmit(article: Article, next: () => void) {
+      await api.article.add(article)
+      next()
+      await refresh()
     }
     return {
-      articles,
+      Article,
 
-      onGenTestClick
+      articles,
+      EdtAtclMapper,
+      EdtAtclEmitter,
+
+      refresh,
+      onArticleSubmit
     }
   }
 })
