@@ -1,5 +1,5 @@
 module.exports = {
-  assetsDir: 'vote-video',
+  publicPath: '/vote-video',
   devServer: {
     proxy: {
       '/vote-video/(mdl|api|job)': {

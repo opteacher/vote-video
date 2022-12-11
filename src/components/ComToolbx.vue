@@ -3,20 +3,21 @@
     <a-button type="link">
       <template #icon><search-outlined /></template>
     </a-button>
-    <a-select v-model:value="order" style="width: 120px" :options="options" @change="onOrderChange">
-      <template #suffixIcon><smile-outlined class="ant-select-suffix" /></template>
+    <a-select v-model:value="order" class="w-32" :options="options" @change="onOrderChange">
+      <template #suffixIcon><sort-descending-outlined class="ant-select-suffix" /></template>
     </a-select>
   </div>
 </template>
 
 <script lang="ts">
-import { SearchOutlined } from '@ant-design/icons-vue'
+import { SearchOutlined, SortDescendingOutlined } from '@ant-design/icons-vue'
 import { defineComponent, reactive, ref } from 'vue'
 
 export default defineComponent({
   name: 'ComToolbx',
   components: {
-    SearchOutlined
+    SearchOutlined,
+    SortDescendingOutlined
   },
   setup() {
     const order = ref(undefined as string | undefined)
